@@ -1,11 +1,28 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=Playfair+Display:wght@700;900&display=swap');
 
-/* Optional: Ensures the background of the whole page is consistent */
-:root {
-  background-color: #f8fafc; /* slate-50 */
+@theme {
+  /* Brand Colors */
+  --color-brand-white: #ffffff;
+  --color-brand-brown: #5b4a47;
+  --color-brand-blue: #60b5f7;
+  --color-brand-gold: #f0c449;
+  --color-brand-purple: #503a96;
+  --color-brand-success: #63d308;
+  
+  /* Typography */
+  --font-header: "Playfair Display", serif;
+  --font-body: "Exo 2", sans-serif;
 }
 
-body {
-  margin: 0;
-  padding: 0;
+@layer base {
+  body {
+    @apply bg-[--color-brand-purple] font-[--font-body] text-[--color-brand-white] antialiased;
+    background: linear-gradient(135deg, #503a96 0%, #2e1f5e 100%);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3 {
+    @apply font-[--font-header];
+  }
 }
