@@ -60,7 +60,7 @@ const GraphVisualizer = () => {
                   initial={{ pathLength: 0, opacity: 0 }}
                   animate={{ pathLength: 1, opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  transition={{ duration: 1.0, ease: "easeInOut" }}
                 />
               );
             })}
@@ -79,7 +79,7 @@ const GraphVisualizer = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
                 whileHover={{ scale: 1.5 }}
-                transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+                transition={{ type: 'spring', stiffness: 260, damping: 20, duration: 0.8}}
               />
             ))}
           </AnimatePresence>
@@ -89,7 +89,7 @@ const GraphVisualizer = () => {
       {/* Professional Status Indicator */}
       <div className="p-4 bg-text-main/5 rounded-2xl border border-text-main/5 backdrop-blur-sm">
         <p className="font-header text-[10px] text-text-sub text-center uppercase tracking-[0.2em] font-bold">
-          AI Inference: Neural Mapping Active
+          AI INFERENCE ACTIVE 
         </p>
       </div>
     </div>

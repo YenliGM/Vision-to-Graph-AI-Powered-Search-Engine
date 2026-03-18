@@ -1,6 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
+  /* Typography Variables */
+  --font-header: "Exo 2", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Playfair Display", serif;
+
+  --font-header: var(--font-sans);
+  --font-body: var(--font-serif);
+
   /* Brand Colors */
   --color-brand-blue: #3b82f6;
   --color-brand-success: #22c55e;
@@ -9,20 +17,28 @@
   --color-gold-700: #b45309;
   
   /* Text Colors */
-  --color-text-main: #0f172a;
-  --color-text-sub: #64748b;
+  --color-text-main: #001533;
+  --color-text-sub: #525F71;
+}
 
-  /* Typography */
-  --font-header: "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
+@layer base {
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    background-color: #f8fafc;
+    color: var(--color-text-sub);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-header);
+    color: var(--color-text-main);
+    font-weight: 700;
+  }
 }
 
 :root {
   background-color: #f8fafc;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-body);
 }

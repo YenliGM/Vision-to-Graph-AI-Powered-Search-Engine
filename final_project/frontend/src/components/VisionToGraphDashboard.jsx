@@ -7,14 +7,15 @@ import {
   Layers, 
   Share2, 
   Cpu, 
-  ExternalLink 
+  ExternalLink,
+  Menu, // Added for mobile
+  X     // Added for mobile
 } from 'lucide-react';
 
 import GraphVisualizer from './GraphVisualizer';
 
 /**
  * @description Professional Error Management Component
- * Displays contextual errors with an internationalized look.
  */
 const ErrorMessage = ({ message }) => (
   <motion.div 
@@ -27,14 +28,14 @@ const ErrorMessage = ({ message }) => (
   </motion.div>
 );
 
-
 /**
  * @main VisionToGraphDashboard
- * Core logic for file orchestration and professional UI layout.
+ * Responsive version with Mobile Hamburger Menu and Centered Navigation.
  */
 const VisionToGraphDashboard = () => {
-  const [status, setStatus] = useState('idle'); // 'idle' | 'uploading' | 'success' | 'error'
+  const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -43,11 +44,11 @@ const VisionToGraphDashboard = () => {
     setStatus('uploading');
     setError(null);
 
-    // Simulated API Latency for UX demonstration
+    // International Standard: Simulated high-performance processing delay
     setTimeout(() => {
       if (file.size > 5 * 1024 * 1024) {
+        setError("File size exceeds 5MB. Please upload a optimized graph image.");
         setStatus('error');
-        setError('File exceeds 5MB limit for rapid extraction. Please optimize the image.');
       } else {
         setStatus('success');
       }
@@ -55,112 +56,136 @@ const VisionToGraphDashboard = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-brand-white text-text-main selection:bg-brand-blue/30">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8">
-        
-        {/* Navigation Header */}
-        <nav className="flex items-center justify-between mb-20 p-4 border border-text-main/10 rounded-2xl bg-white/50 backdrop-blur-md shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-text-main rounded-lg flex items-center justify-center text-white font-header font-black text-xl">V</div>
-            <span className="font-header font-black text-2xl tracking-tight">Vision <span className="text-brand-blue">to</span> Graph</span>
+    <div className="min-h-screen bg-brand-white selection:bg-brand-blue/10">
+      {/* FIXED RESPONSIVE NAVIGATION BAR
+          Maintains sticky position and glassmorphism on all devices.
+      */}
+      <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-text-main/5 py-4 md:py-6 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          {/* Brand Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-brand-blue rounded-xl flex items-center justify-center shadow-lg shadow-brand-blue/20">
+              <Cpu className="text-white w-6 h-6" />
+            </div>
+            <span className="font-header text-lg md:text-xl font-bold tracking-tight text-text-main uppercase">
+              VisionToGraph <span className="text-brand-blue">Labs</span>
+            </span>
           </div>
-          
-          <div className="hidden md:flex items-center gap-8">
-            {['Analytics', 'API Reference', 'Graph Explorer', 'Documentation'].map((item) => (
-              <a key={item} href="#" className="text-xs font-bold uppercase tracking-tighter hover:text-brand-blue transition-colors">
+
+          {/* Desktop Navigation Links (Hidden on mobile) */}
+          <div className="hidden md:flex gap-10 font-sans">
+            {['Analytics', 'Api Reference', 'Graph Explorer', 'Documentation'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="text-xs font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors">
                 {item}
               </a>
             ))}
           </div>
 
-          <button className="hidden sm:block px-6 py-2.5 bg-brand-blue text-white font-bold rounded-xl shadow-lg shadow-brand-blue/20 hover:-translate-y-0.5 transition-all text-xs uppercase tracking-widest">
-            View on GitHub
-          </button>
-        </nav>
+          {/* Right Section: Button + Mobile Toggle */}
+          <div className="flex items-center gap-4">
+            <button className="hidden sm:block bg-text-main text-white px-6 md:px-8 py-3 rounded-xl text-[10px] md:text-xs font-bold font-sans uppercase tracking-widest hover:bg-brand-blue transition-all shadow-xl shadow-text-main/10 active:scale-95">
+              GitHub Repo
+            </button>
+            
+            {/* Hamburger Button (Visible only on mobile) */}
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-text-main hover:bg-text-main/5 rounded-lg transition-colors"
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
 
-        {/* Hero & Action Grid */}
-        <main className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-stretch">
+        {/* Mobile Dropdown Menu (Animated) */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden overflow-hidden bg-white/95 border-t border-text-main/5"
+            >
+              <div className="flex flex-col items-center gap-8 py-12 px-4 font-sans">
+                {['Analytics', 'Api Reference', 'Graph Explorer', 'Documentation'].map((item) => (
+                  <a 
+                    key={item} 
+                    href={`#${item.toLowerCase()}`} 
+                    onClick={() => setIsMenuOpen(false)} // Auto-close on click
+                    className="text-sm font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors"
+                  >
+                    {item}
+                  </a>
+                ))}
+                <button className="sm:hidden w-full bg-text-main text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg active:scale-95 font-sans">
+                  GitHub Repo
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+
+      {/* Main Content Area: Responsive Grid */}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pb-12">
+        <main className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 pt-12 md:pt-24 items-center">
           
-          {/* Left: Content & Upload */}
-          <div className="lg:col-span-7 space-y-10">
-            <header className="space-y-6">
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 text-gold-700 text-[10px] font-black uppercase tracking-widest border border-gold/20"
-              >
-                <Cpu className="w-3 h-3" /> Zero-ETL Extraction Powered by Gemini
-              </motion.div>
-              
-              <h1 className="text-5xl lg:text-6xl font-header font-black leading-[1.1] tracking-tight text-balance">
-                Vision-to-Graph:  <span className="text-brand-blue">Visual Intelligence</span> into Structured Data.
+          {/* Left Column: UI Controls */}
+          <section className="lg:col-span-7 space-y-8 md:space-y-12 order-2 lg:order-1">
+            <div className="space-y-4 md:space-y-6 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/5 border border-brand-blue/10">
+                <div className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-blue">v2.0 Beta Active</span>
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-header font-bold text-text-main leading-[1.1] tracking-tighter">
+                Transform  <br className="hidden md:block" /> 
+                <span className="text-brand-blue italic">Visual Intelligence</span> into Structured Data.
               </h1>
-              
-              <p className="font-body text-xl text-text-sub leading-relaxed max-w-2xl">
-                Automated neural extraction of weighted directed graphs. Generate interoperable JSON-LD and RDF structures with zero manual ETL. Validated Search Optimality: BFS, DFS, and UCS Implementation.
+              <p className="text-base md:text-xl text-text-sub font-body max-w-2xl mx-auto lg:mx-0">
+                Automated neural extraction of weighted directed graphs. Generate interoperable JSON-LD and RDF structures with zero manual ETL
               </p>
-            </header>
+            </div>
 
-            {/* Dropzone Component */}
-            <div className="group relative">
+            {/* Upload Zone */}
+            <div className="relative group max-w-xl mx-auto lg:mx-0">
               <div className={`
-                relative h-72 border-2 border-dashed rounded-3xl transition-all duration-500 flex flex-col items-center justify-center gap-4 overflow-hidden
-                ${status === 'uploading' ? 'border-brand-blue bg-brand-blue/5' : 'border-text-main/10 bg-white hover:border-brand-blue/40 hover:shadow-2xl hover:shadow-brand-blue/5'}
+                relative h-[250px] md:h-[300px] rounded-[2.5rem] border-2 border-dashed transition-all duration-500 flex flex-col items-center justify-center text-center p-8
+                ${status === 'success' ? 'border-brand-success bg-brand-success/5' : 
+                  status === 'error' ? 'border-red-500 bg-red-500/5' : 
+                  status === 'uploading' ? 'border-brand-blue bg-brand-blue/5' : 
+                  'border-text-main/10 hover:border-brand-blue/40 bg-white shadow-xl shadow-text-main/5'}
               `}>
                 <input 
                   type="file" 
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   onChange={handleFileUpload}
                   disabled={status === 'uploading'}
                 />
                 
-                <AnimatePresence mode="wait">
-                  {status === 'uploading' ? (
-                    <motion.div 
-                      key="uploading"
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                      className="flex flex-col items-center gap-4"
-                    >
-                      <div className="w-12 h-12 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
-                      <p className="font-header font-bold text-brand-blue animate-pulse">Processing Nodes...</p>
-                    </motion.div>
-                  ) : status === 'success' ? (
-                    <motion.div 
-                      key="success"
-                      initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                      className="flex flex-col items-center gap-3"
-                    >
-                      <div className="w-16 h-16 bg-brand-success/10 text-brand-success rounded-full flex items-center justify-center">
-                        <CheckCircle2 className="w-8 h-8" />
-                      </div>
-                      <p className="font-header font-bold text-lg">Extraction Complete</p>
-                    </motion.div>
-                  ) : (
-                    <motion.div key="idle" className="flex flex-col items-center gap-4 px-6 text-center">
-                      <div className="w-16 h-16 bg-text-main/5 text-text-main/40 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:text-brand-blue transition-all duration-500">
-                        <Upload className="w-8 h-8" />
-                      </div>
-                      <div>
-                        <p className="font-header font-bold text-lg mb-1">Upload Visualization</p>
-                        <p className="font-body text-sm text-text-sub">Drag and drop high-res image or SVG</p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div className="space-y-4">
+                  <div className="w-16 h-16 bg-text-main/5 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                    {status === 'success' ? <CheckCircle2 className="w-8 h-8 text-brand-success" /> : <Upload className="w-8 h-8 text-text-main/40" />}
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-text-main tracking-tight">
+                      {status === 'uploading' ? 'Processing Inference...' : 'Select Visualization'}
+                    </p>
+                    <p className="text-xs text-text-sub uppercase tracking-widest font-semibold mt-1">
+                      Drag and drop or click to browse
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              {/* Error Display */}
-              <AnimatePresence>
-                {error && (
-                  <div className="mt-6">
-                    <ErrorMessage message={error} />
-                  </div>
-                )}
-              </AnimatePresence>
+              <div className="mt-6 h-12">
+                <AnimatePresence>
+                  {status === 'error' && <ErrorMessage message={error} />}
+                </AnimatePresence>
+              </div>
             </div>
 
-            {/* Feature Pills */}
-            <div className="flex flex-wrap gap-4 pt-4">
+            {/* Feature Pills (Centered on mobile) */}
+            <div className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 pt-4">
               {[
                 { icon: Layers, label: 'Semantic Mapping' },
                 { icon: Share2, label: 'JSON-LD / RDF-EXT' },
@@ -168,22 +193,22 @@ const VisionToGraphDashboard = () => {
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2 px-4 py-2 bg-white border border-text-main/5 rounded-xl shadow-sm">
                   <Icon className="w-4 h-4 text-brand-blue" />
-                  <span className="text-xs font-bold uppercase tracking-wider">{label}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Right: Visualization Panel */}
-          <section className="lg:col-span-5 h-full min-h-[500px]">
+          {/* Right Column: Visualization Panel */}
+          <section className="lg:col-span-5 h-full min-h-[400px] md:min-h-[500px] order-1 lg:order-2">
             <GraphVisualizer />
           </section>
 
         </main>
 
-        <footer className="mt-24 pt-8 border-t border-text-main/5 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.2em] text-text-main/30">
+        <footer className="mt-32 pt-12 pb-12 border-t border-text-main/10 flex flex-col md:flex-row gap-6 justify-between items-center text-xs font-bold font-sans uppercase tracking-[0.2em] text-text-main/60 bg-slate-50/50 px-8 rounded-xl">
           <p>© 2026 Vision To Graph Labs • International Edition</p>
-          <div className="flex gap-6">
+          <div className="flex gap-8">
             <a href="#" className="hover:text-brand-blue transition-colors">Terms</a>
             <a href="#" className="hover:text-brand-blue transition-colors">Privacy</a>
             <a href="#" className="hover:text-brand-blue transition-colors">Who we are</a>
