@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 import GraphVisualizer from './GraphVisualizer';
+import { EXTERNAL_LINKS } from '../config/constants';
 
 /**
  * @description Professional Error Management Component
@@ -82,10 +83,12 @@ const VisionToGraphDashboard = () => {
           </div>
 
           {/* Right Section: Button + Mobile Toggle */}
-          <div className="flex items-center gap-4">
-            <button className="hidden sm:block bg-text-main text-white px-6 md:px-8 py-3 rounded-xl text-[10px] md:text-xs font-bold font-sans uppercase tracking-widest hover:bg-brand-blue transition-all shadow-xl shadow-text-main/10 active:scale-95">
-              GitHub Repo
-            </button>
+            <div className="flex items-center gap-4">
+              <a href={EXTERNAL_LINKS.GITHUB_REPO} target="_blank" rel="noopener noreferrer">
+                <button className="hidden sm:block bg-text-main text-white px-6 md:px-8 py-3 rounded-xl text-[10px] md:text-xs font-bold font-sans uppercase tracking-widest hover:bg-brand-blue transition-all shadow-xl shadow-text-main/10 active:scale-95">
+                  GitHub Repo
+                </button>
+              </a>
             
             {/* Hamburger Button (Visible only on mobile) */}
             <button 
@@ -117,9 +120,11 @@ const VisionToGraphDashboard = () => {
                     {item}
                   </a>
                 ))}
-                <button className="sm:hidden w-full bg-text-main text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg active:scale-95 font-sans">
-                  GitHub Repo
-                </button>
+                <a href={EXTERNAL_LINKS.GITHUB_REPO} target="_blank" rel="noopener noreferrer" className="w-full sm:hidden">
+                  <button className="sm:hidden w-full bg-text-main text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg active:scale-95 font-sans">
+                    GitHub Repo
+                  </button>
+                </a>
               </div>
             </motion.div>
           )}
@@ -211,7 +216,14 @@ const VisionToGraphDashboard = () => {
           <div className="flex gap-8">
             <a href="#" className="hover:text-brand-blue transition-colors">Terms</a>
             <a href="#" className="hover:text-brand-blue transition-colors">Privacy</a>
-            <a href="#" className="hover:text-brand-blue transition-colors">Who we are</a>
+            <a 
+              href={EXTERNAL_LINKS.PERSONAL_PORTFOLIO} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="hover:text-brand-blue transition-colors"
+              >
+              Who we are
+            </a>
           </div>
         </footer>
       </div>
