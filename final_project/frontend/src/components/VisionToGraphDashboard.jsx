@@ -14,6 +14,7 @@ import {
 
 import GraphVisualizer from './GraphVisualizer';
 import TermsModal from './TermsModal';
+import AnalyticsDrawer from './AnalyticsDrawer';
 import { EXTERNAL_LINKS } from '../config/constants';
 
 /**
@@ -39,6 +40,7 @@ const VisionToGraphDashboard = () => {
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const [isTermsOpen, setIsTermsOpen] = useState(false); // Terms modal state
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); // Analytics drawer state
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -77,10 +79,17 @@ const VisionToGraphDashboard = () => {
 
           {/* Desktop Navigation Links (Hidden on mobile) */}
           <div className="hidden md:flex gap-10 font-sans">
-            {['Analytics', 'Api Reference', 'Graph Explorer', 'Documentation'].map((item) => (
-              <a key={item} href={`#${item.toLowerCase()}`} className="text-xs font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors">
+             {['Analytics', 'Api Reference', 'Graph Explorer', 'Documentation'].map((item) => (
+              <button
+                key={item}
+                onClick={() => {
+                  if (item === 'Analytics') setIsAnalyticsOpen(true);
+                  // Add logic for other buttons here in future commits
+              }}
+                className="text-xs font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
+              >
                 {item}
-              </a>
+              </button>
             ))}
           </div>
 
@@ -113,15 +122,22 @@ const VisionToGraphDashboard = () => {
             >
               <div className="flex flex-col items-center gap-8 py-12 px-4 font-sans">
                 {['Analytics', 'Api Reference', 'Graph Explorer', 'Documentation'].map((item) => (
-                  <a 
-                    key={item} 
-                    href={`#${item.toLowerCase()}`} 
-                    onClick={() => setIsMenuOpen(false)} // Auto-close on click
-                    className="text-sm font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors"
-                  >
-                    {item}
-                  </a>
-                ))}
+                  <button
+                    key={item}
+                    onClick={() => {
+                    setIsMenuOpen(false); // Close mobile menu first
+                    if (item === 'Analytics') {
+                    // Small delay ensures the menu starts closing before the drawer slides in
+                      setTimeout(() => setIsAnalyticsOpen(true), 150);
+                    }
+                    // Add logic for other buttons here in future commits
+                  }}
+                  className="text-sm font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
+                >
+                  {item}
+                </button>
+               ))}
+
                 <a href={EXTERNAL_LINKS.GITHUB_REPO} target="_blank" rel="noopener noreferrer" className="w-full sm:hidden">
                   <button className="sm:hidden w-full bg-text-main text-white py-4 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg active:scale-95 font-sans">
                     GitHub Repo
@@ -233,6 +249,7 @@ const VisionToGraphDashboard = () => {
             </a>
           </div>
           <TermsModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
+          <AnalyticsDrawer isOpen={isAnalyticsOpen} onClose={() => setIsAnalyticsOpen(false)} />
         </footer>
       </div>
     </div>
