@@ -15,7 +15,8 @@ import {
 import GraphVisualizer from './GraphVisualizer';
 import TermsModal from './TermsModal';
 import AnalyticsDrawer from './AnalyticsDrawer';
-import ApiReferenceModal from './ApiReferenceModal'
+import ApiReferenceModal from './ApiReferenceModal';
+import GraphExplorer from './GraphExplorer';
 import { EXTERNAL_LINKS } from '../config/constants';
 
 
@@ -44,6 +45,7 @@ const VisionToGraphDashboard = () => {
   const [isTermsOpen, setIsTermsOpen] = useState(false); // Terms modal state
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); // Analytics drawer state
   const [isApiOpen, setIsApiOpen] = useState(false); // API Reference modal state
+  const [isExplorerMode, setIsExplorerMode] = useState(false); // Graph Explorer mode state
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -88,6 +90,7 @@ const VisionToGraphDashboard = () => {
                 onClick={() => {
                   if (item === 'Analytics') setIsAnalyticsOpen(true); // Hook up the Analytics Drawer
                   if (item === 'Api Reference') setIsApiOpen(true); // Hook up the API Reference
+                  if (item === 'Graph Explorer') setIsExplorerMode(!isExplorerMode); // Toggle Focused Explorer Mode
                   // Add logic for other buttons here in future commits
               }}
                 className="text-xs font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
@@ -135,6 +138,7 @@ const VisionToGraphDashboard = () => {
                       setTimeout(() => setIsAnalyticsOpen(true), 150);
                     }
                     if (item === 'Api Reference') setIsApiOpen(true); // Hook up the API Reference
+                    if (item === 'Graph Explorer') setIsExplorerMode(!isExplorerMode); // Toggle Focused Explorer Mode
                     // Add logic for other buttons here in future commits
                   }}
                   className="text-sm font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
@@ -158,81 +162,104 @@ const VisionToGraphDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 pb-12">
         <main className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 pt-12 md:pt-24 items-center">
           
-          {/* Left Column: UI Controls */}
-          <section className="lg:col-span-7 space-y-8 md:space-y-12 order-2 lg:order-1">
-            <div className="space-y-4 md:space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/5 border border-brand-blue/10">
-                <div className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
-                <span className="text-[10px] font-bold font-sans uppercase tracking-[0.2em] text-brand-drops">ZERO ETL EXTRACTION POWERED BY GEMINI 2.0</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-header font-bold text-text-main leading-[1.1] tracking-tighter">
-                Transform  <br className="hidden md:block" /> 
-                <span className="text-brand-blue italic">Visual Intelligence</span> into Structured Data.
-              </h1>
-              <p className="text-base md:text-xl text-text-sub font-body max-w-2xl mx-auto lg:mx-0">
-                Automated neural extraction of weighted directed graphs. Generate interoperable JSON-LD and RDF structures with zero manual ETL
-              </p>
-            </div>
-
-            {/* Upload Zone */}
-            <div className="relative group max-w-xl mx-auto lg:mx-0">
-              <div className={`
-                relative h-[250px] md:h-[300px] rounded-[2.5rem] border-2 border-dashed transition-all duration-500 flex flex-col items-center justify-center text-center p-8
-                ${status === 'success' ? 'border-brand-success bg-brand-success/5' : 
-                  status === 'error' ? 'border-red-500 bg-red-500/5' : 
-                  status === 'uploading' ? 'border-brand-blue bg-brand-blue/5' : 
-                  'border-text-main/10 hover:border-brand-blue/40 bg-white shadow-xl shadow-text-main/5'}
-              `}>
-                <input 
-                  type="file" 
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  onChange={handleFileUpload}
-                  disabled={status === 'uploading'}
-                />
-                
-                <div className="space-y-4">
-                  <div className="w-16 h-16 bg-text-main/5 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                    {status === 'success' ? <CheckCircle2 className="w-8 h-8 text-brand-success" /> : <Upload className="w-8 h-8 text-text-main/40" />}
+          {/* Left Column: UI Controls (Hidden in Explorer Mode) */}
+          <AnimatePresence mode="wait">
+            {!isExplorerMode && (
+              <motion.section 
+                key="ui-controls"
+                initial={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50, width: 0, transition: { duration: 0.4 } }}
+                className="lg:col-span-7 space-y-8 md:space-y-12 order-2 lg:order-1"
+              >
+                <div className="space-y-4 md:space-y-6 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/5 border border-brand-blue/10">
+                    <div className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
+                    <span className="text-[10px] font-bold font-sans uppercase tracking-[0.2em] text-brand-drops">ZERO ETL EXTRACTION POWERED BY GEMINI 2.0</span>
                   </div>
-                  <div>
-                    <p className="text-lg font-bold text-text-main tracking-tight">
-                      {status === 'uploading' ? 'Processing Inference...' : 'Select Visualization'}
-                    </p>
-                    <p className="text-xs text-text-sub uppercase tracking-widest font-semibold mt-1">
-                      Drag and drop or click to browse
-                    </p>
+                  <h1 className="text-4xl md:text-5xl lg:text-7xl font-header font-bold text-text-main leading-[1.1] tracking-tighter">
+                    Transform  <br className="hidden md:block" /> 
+                    <span className="text-brand-blue italic">Visual Intelligence</span> into Structured Data.
+                  </h1>
+                  <p className="text-base md:text-xl text-text-sub font-body max-w-2xl mx-auto lg:mx-0">
+                    Automated neural extraction of weighted directed graphs. Generate interoperable JSON-LD and RDF structures with zero manual ETL
+                  </p>
+                </div>
+
+                {/* Upload Zone */}
+                <div className="relative group max-w-xl mx-auto lg:mx-0">
+                  <div className={`
+                    relative h-[250px] md:h-[300px] rounded-[2.5rem] border-2 border-dashed transition-all duration-500 flex flex-col items-center justify-center text-center p-8
+                    ${status === 'success' ? 'border-brand-success bg-brand-success/5' : 
+                      status === 'error' ? 'border-red-500 bg-red-500/5' : 
+                      status === 'uploading' ? 'border-brand-blue bg-brand-blue/5' : 
+                      'border-text-main/10 hover:border-brand-blue/40 bg-white shadow-xl shadow-text-main/5'}
+                  `}>
+                    <input 
+                      type="file" 
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      onChange={handleFileUpload}
+                      disabled={status === 'uploading'}
+                    />
+                    
+                    <div className="space-y-4">
+                      <div className="w-16 h-16 bg-text-main/5 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                        {status === 'success' ? <CheckCircle2 className="w-8 h-8 text-brand-success" /> : <Upload className="w-8 h-8 text-text-main/40" />}
+                      </div>
+                      <div>
+                        <p className="text-lg font-bold text-text-main tracking-tight">
+                          {status === 'uploading' ? 'Processing Inference...' : 'Select Visualization'}
+                        </p>
+                        <p className="text-xs text-text-sub uppercase tracking-widest font-semibold mt-1">
+                          Drag and drop or click to browse
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 h-12">
+                    <AnimatePresence>
+                      {status === 'error' && <ErrorMessage message={error} />}
+                    </AnimatePresence>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-6 h-12">
-                <AnimatePresence>
-                  {status === 'error' && <ErrorMessage message={error} />}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Feature Pills (Centered on mobile) */}
-            <div className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 pt-4">
-              {[
-                { icon: Layers, label: 'Semantic Mapping' },
-                { icon: Share2, label: 'JSON-LD / RDF-EXT' },
-                { icon: ExternalLink, label: 'Restful Architecture' }
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-2 px-4 py-2 bg-white border border-text-main/5 rounded-xl shadow-sm">
-                  <Icon className="w-4 h-4 text-brand-blue" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+                {/* Feature Pills */}
+                <div className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 pt-4">
+                  {[
+                    { icon: Layers, label: 'Semantic Mapping' },
+                    { icon: Share2, label: 'JSON-LD / RDF-EXT' },
+                    { icon: ExternalLink, label: 'Restful Architecture' }
+                  ].map(({ icon: Icon, label }) => (
+                    <div key={label} className="flex items-center gap-2 px-4 py-2 bg-white border border-text-main/5 rounded-xl shadow-sm">
+                      <Icon className="w-4 h-4 text-brand-blue" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
+              </motion.section>
+            )}
+          </AnimatePresence>
 
-          {/* Right Column: Visualization Panel */}
-          <section className="lg:col-span-5 h-full min-h-[400px] md:min-h-[500px] order-1 lg:order-2">
-            <GraphVisualizer />
-          </section>
+          {/* Right Column: Visualization / Explorer Panel */}
+          <motion.section 
+            layout
+            transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
+            className={`h-full min-h-[400px] md:min-h-[500px] order-1 lg:order-2 ${
+              isExplorerMode ? 'lg:col-span-12' : 'lg:col-span-5'
+            }`}
+          >
+            {isExplorerMode ? (
+              <GraphExplorer 
+                isExplorerMode={isExplorerMode} // Pass the state to trigger the focused explorer layout
+                onExit={() => setIsExplorerMode(false)}
+              />
+            ) : (
+              <GraphVisualizer />
+            )}
+          </motion.section>
 
         </main>
+      
 
         <footer className="mt-32 pt-12 pb-12 border-t border-text-main/10 flex flex-col md:flex-row gap-6 justify-between items-center text-xs font-bold font-sans uppercase tracking-[0.2em] text-text-main/60 bg-slate-50/50 px-8 rounded-xl">
           <p>© 2026 Vision To Graph Labs • International Edition</p>
@@ -256,6 +283,7 @@ const VisionToGraphDashboard = () => {
           <TermsModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
           <AnalyticsDrawer isOpen={isAnalyticsOpen} onClose={() => setIsAnalyticsOpen(false)} />
           <ApiReferenceModal isOpen={isApiOpen} onClose={() => setIsApiOpen(false)} />
+          
         </footer>
       </div>
     </div>
