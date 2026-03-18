@@ -17,6 +17,7 @@ import TermsModal from './TermsModal';
 import AnalyticsDrawer from './AnalyticsDrawer';
 import ApiReferenceModal from './ApiReferenceModal';
 import GraphExplorer from './GraphExplorer';
+import Documentation from './Documentation';
 import { EXTERNAL_LINKS } from '../config/constants';
 
 
@@ -46,6 +47,7 @@ const VisionToGraphDashboard = () => {
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); // Analytics drawer state
   const [isApiOpen, setIsApiOpen] = useState(false); // API Reference modal state
   const [isExplorerMode, setIsExplorerMode] = useState(false); // Graph Explorer mode state
+  const [isDocsOpen, setIsDocsOpen] = useState(false); // Documentation modal state
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -91,6 +93,7 @@ const VisionToGraphDashboard = () => {
                   if (item === 'Analytics') setIsAnalyticsOpen(true); // Hook up the Analytics Drawer
                   if (item === 'Api Reference') setIsApiOpen(true); // Hook up the API Reference
                   if (item === 'Graph Explorer') setIsExplorerMode(!isExplorerMode); // Toggle Focused Explorer Mode
+                  if (item === 'Documentation') setIsDocsOpen(true); // Hook up the Documentation Modal
                   // Add logic for other buttons here in future commits
               }}
                 className="text-xs font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
@@ -139,6 +142,7 @@ const VisionToGraphDashboard = () => {
                     }
                     if (item === 'Api Reference') setIsApiOpen(true); // Hook up the API Reference
                     if (item === 'Graph Explorer') setIsExplorerMode(!isExplorerMode); // Toggle Focused Explorer Mode
+                    if (item === 'Documentation') setIsDocsOpen(true); // Hook up the Documentation Modal
                     // Add logic for other buttons here in future commits
                   }}
                   className="text-sm font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
@@ -283,7 +287,7 @@ const VisionToGraphDashboard = () => {
           <TermsModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
           <AnalyticsDrawer isOpen={isAnalyticsOpen} onClose={() => setIsAnalyticsOpen(false)} />
           <ApiReferenceModal isOpen={isApiOpen} onClose={() => setIsApiOpen(false)} />
-          
+          <Documentation isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
         </footer>
       </div>
     </div>
