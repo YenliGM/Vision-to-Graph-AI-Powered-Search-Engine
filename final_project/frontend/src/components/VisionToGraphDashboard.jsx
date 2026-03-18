@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 import GraphVisualizer from './GraphVisualizer';
+import TermsModal from './TermsModal';
 import { EXTERNAL_LINKS } from '../config/constants';
 
 /**
@@ -37,6 +38,7 @@ const VisionToGraphDashboard = () => {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
+  const [isTermsOpen, setIsTermsOpen] = useState(false); // Terms modal state
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -140,7 +142,7 @@ const VisionToGraphDashboard = () => {
             <div className="space-y-4 md:space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-blue/5 border border-brand-blue/10">
                 <div className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-blue">v2.0 Beta Active</span>
+                <span className="text-[10px] font-bold font-sans uppercase tracking-[0.2em] text-brand-drops">ZERO ETL EXTRACTION POWERED BY GEMINI 2.0</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-header font-bold text-text-main leading-[1.1] tracking-tighter">
                 Transform  <br className="hidden md:block" /> 
@@ -214,8 +216,13 @@ const VisionToGraphDashboard = () => {
         <footer className="mt-32 pt-12 pb-12 border-t border-text-main/10 flex flex-col md:flex-row gap-6 justify-between items-center text-xs font-bold font-sans uppercase tracking-[0.2em] text-text-main/60 bg-slate-50/50 px-8 rounded-xl">
           <p>© 2026 Vision To Graph Labs • International Edition</p>
           <div className="flex gap-8">
-            <a href="#" className="hover:text-brand-blue transition-colors">Terms</a>
-            <a href="#" className="hover:text-brand-blue transition-colors">Privacy</a>
+            <button 
+              onClick={() => setIsTermsOpen(true)}
+              className="hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0 font-inherit"
+            >
+              TERMS & PRIVACY
+            </button>
+            
             <a 
               href={EXTERNAL_LINKS.PERSONAL_PORTFOLIO} 
               target="_blank" 
@@ -225,6 +232,7 @@ const VisionToGraphDashboard = () => {
               Who we are
             </a>
           </div>
+          <TermsModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
         </footer>
       </div>
     </div>

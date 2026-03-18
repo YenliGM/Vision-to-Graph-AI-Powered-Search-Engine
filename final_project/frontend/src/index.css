@@ -19,6 +19,7 @@
   /* Text Colors */
   --color-text-main: #001533;
   --color-text-sub: #525F71;
+  --color-text-drops: #b45309;
 }
 
 @layer base {
@@ -28,6 +29,7 @@
     font-family: var(--font-body);
     background-color: #f8fafc;
     color: var(--color-text-sub);
+    color: var(--color-text-drops);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
