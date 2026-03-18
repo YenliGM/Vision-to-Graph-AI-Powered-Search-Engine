@@ -10,6 +10,8 @@ import {
   ExternalLink 
 } from 'lucide-react';
 
+import GraphVisualizer from './GraphVisualizer';
+
 /**
  * @description Professional Error Management Component
  * Displays contextual errors with an internationalized look.
@@ -25,77 +27,6 @@ const ErrorMessage = ({ message }) => (
   </motion.div>
 );
 
-/**
- * @description Dynamic Graph Visualization Component
- * Uses Framer Motion for smooth state transitions between graph nodes.
- */
-const GraphVisualizer = () => {
-  const [stage, setStage] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setStage((prev) => (prev + 1) % 3);
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div className="relative flex flex-col h-full gap-6">
-      <div className="flex-1 min-h-[400px] rounded-3xl border border-text-main/10 bg-white shadow-2xl flex items-center justify-center p-12 overflow-hidden">
-        <svg viewBox="0 0 100 100" className="w-full h-full max-w-md">
-          {/* Animated Paths */}
-          <motion.path
-            d="M 20 50 L 50 50"
-            stroke="currentColor"
-            strokeWidth="0.5"
-            className="text-text-main/20"
-            animate={{ pathLength: stage > 0 ? 1 : 0 }}
-          />
-          <motion.path
-            d="M 50 50 L 80 30"
-            stroke="currentColor"
-            strokeWidth="0.5"
-            className="text-text-main/20"
-            animate={{ pathLength: stage > 1 ? 1 : 0 }}
-          />
-          
-          {/* Nodes */}
-          <motion.circle 
-            cx="20" cy="50" r="4" 
-            className="fill-gold stroke-text-main stroke-[0.5]"
-            initial={false}
-            animate={{ scale: stage === 0 ? 1.2 : 1 }}
-          />
-          <motion.circle 
-            cx="50" cy="50" r="4" 
-            className={`${stage >= 1 ? 'fill-brand-blue' : 'fill-white'} stroke-text-main stroke-[0.5]`}
-            animate={{ r: stage === 1 ? 6 : 4 }}
-          />
-          <motion.circle 
-            cx="80" cy="30" r="4" 
-            className={`${stage >= 2 ? 'fill-brand-success' : 'fill-white'} stroke-text-main stroke-[0.5]`}
-          />
-
-          {/* Metadata Label */}
-          <AnimatePresence>
-            {stage === 1 && (
-              <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <rect x="55" y="40" width="30" height="8" rx="1" className="fill-text-main" />
-                <text x="57" y="46" className="fill-white font-mono text-[3px]">Node_ID: 425437</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-        </svg>
-      </div>
-
-      <div className="p-4 bg-text-main/5 rounded-2xl border border-text-main/5 backdrop-blur-sm">
-        <p className="font-body text-xs text-text-sub text-center uppercase tracking-widest font-semibold">
-          AI Inference: Real-time relationship extraction active
-        </p>
-      </div>
-    </div>
-  );
-};
 
 /**
  * @main VisionToGraphDashboard
