@@ -15,7 +15,9 @@ import {
 import GraphVisualizer from './GraphVisualizer';
 import TermsModal from './TermsModal';
 import AnalyticsDrawer from './AnalyticsDrawer';
+import ApiReferenceModal from './ApiReferenceModal'
 import { EXTERNAL_LINKS } from '../config/constants';
+
 
 /**
  * @description Professional Error Management Component
@@ -41,6 +43,7 @@ const VisionToGraphDashboard = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const [isTermsOpen, setIsTermsOpen] = useState(false); // Terms modal state
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); // Analytics drawer state
+  const [isApiOpen, setIsApiOpen] = useState(false); // API Reference modal state
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files[0];
@@ -83,7 +86,8 @@ const VisionToGraphDashboard = () => {
               <button
                 key={item}
                 onClick={() => {
-                  if (item === 'Analytics') setIsAnalyticsOpen(true);
+                  if (item === 'Analytics') setIsAnalyticsOpen(true); // Hook up the Analytics Drawer
+                  if (item === 'Api Reference') setIsApiOpen(true); // Hook up the API Reference
                   // Add logic for other buttons here in future commits
               }}
                 className="text-xs font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
@@ -130,6 +134,7 @@ const VisionToGraphDashboard = () => {
                     // Small delay ensures the menu starts closing before the drawer slides in
                       setTimeout(() => setIsAnalyticsOpen(true), 150);
                     }
+                    if (item === 'Api Reference') setIsApiOpen(true); // Hook up the API Reference
                     // Add logic for other buttons here in future commits
                   }}
                   className="text-sm font-bold uppercase tracking-[0.2em] text-text-sub hover:text-brand-blue transition-colors cursor-pointer bg-transparent border-none p-0"
@@ -250,6 +255,7 @@ const VisionToGraphDashboard = () => {
           </div>
           <TermsModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
           <AnalyticsDrawer isOpen={isAnalyticsOpen} onClose={() => setIsAnalyticsOpen(false)} />
+          <ApiReferenceModal isOpen={isApiOpen} onClose={() => setIsApiOpen(false)} />
         </footer>
       </div>
     </div>
