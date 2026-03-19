@@ -19,6 +19,7 @@ import ApiReferenceModal from './ApiReferenceModal';
 import GraphExplorer from './GraphExplorer';
 import Documentation from './Documentation';
 import { EXTERNAL_LINKS } from '../config/constants';
+import { useGraphUpload } from '../hooks/useGraphUpload';
 
 
 /**
@@ -40,32 +41,18 @@ const ErrorMessage = ({ message }) => (
  * Responsive version with Mobile Hamburger Menu and Centered Navigation.
  */
 const VisionToGraphDashboard = () => {
-  const [status, setStatus] = useState('idle');
-  const [error, setError] = useState(null);
+  // --- UI STATE (Manages what the user sees) ---
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Mobile menu state
   const [isTermsOpen, setIsTermsOpen] = useState(false); // Terms modal state
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false); // Analytics drawer state
   const [isApiOpen, setIsApiOpen] = useState(false); // API Reference modal state
   const [isExplorerMode, setIsExplorerMode] = useState(false); // Graph Explorer mode state
   const [isDocsOpen, setIsDocsOpen] = useState(false); // Documentation modal state
-
-  const handleFileUpload = useCallback(async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setStatus('uploading');
-    setError(null);
-
-    // International Standard: Simulated high-performance processing delay
-    setTimeout(() => {
-      if (file.size > 5 * 1024 * 1024) {
-        setError("File size exceeds 5MB. Please upload a optimized graph image.");
-        setStatus('error');
-      } else {
-        setStatus('success');
-      }
-    }, 2000);
-  }, []);
+  
+  // --- LOGIC HOOK (Manages the "Heavy Lifting" and Connection) ---
+  // We extract status and error directly from our custom delivery specialist
+  const { status, error, handleFileUpload } = useGraphUpload();
+  
 
   return (
     <div className="min-h-screen bg-brand-white selection:bg-brand-blue/10">

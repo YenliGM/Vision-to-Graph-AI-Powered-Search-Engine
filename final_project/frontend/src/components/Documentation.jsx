@@ -65,7 +65,7 @@ const Documentation = ({ isOpen, onClose }) => {
             >
               Academic Resource • Open Access
             </motion.span>
-            <h2 className="text-4xl md:text-5xl font-serif text-slate-900 leading-tight mb-8">
+            <h2 className="text-4xl md:text-5xl font-sans text-slate-900 leading-tight mb-8">
               Neural-Symbolic Pipeline: <br/> 
               <span className="text-brand-blue italic underline decoration-brand-blue/20 underline-offset-8">Spatial Inference & Graph Synthesis</span>
             </h2>
