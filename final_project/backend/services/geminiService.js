@@ -11,9 +11,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // 1. SECURITY CHECK: Ensure the secret key exists before starting
-const API_KEY = process.env.GEMINI_API_KEY;
+const API_KEY = process.env.VITE_GEMINI_API_KEY;
 if (!API_KEY) {
-    throw new Error("[FATAL] GEMINI_API_KEY is missing. Please check your .env file.");
+    throw new Error("[FATAL] VITE_GEMINI_API_KEY is missing. Please check your .env file.");
 }
 
 // 2. INITIALIZE THE BRAIN: Setup the Google Gen AI client
