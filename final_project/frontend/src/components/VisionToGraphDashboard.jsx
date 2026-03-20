@@ -18,6 +18,8 @@ import AnalyticsDrawer from './AnalyticsDrawer';
 import ApiReferenceModal from './ApiReferenceModal';
 import GraphExplorer from './GraphExplorer';
 import Documentation from './Documentation';
+import GraphCanvas from './GraphCanvas';
+import AIPanelVisualizer from './AIPanelVisualizer';
 import { EXTERNAL_LINKS } from '../config/constants';
 import { useGraphUpload } from '../hooks/useGraphUpload';
 
@@ -37,6 +39,31 @@ const ErrorMessage = ({ message }) => (
 );
 
 /**
+ * @description Sleek Loading State for AI Extraction
+ */
+const ProcessingState = ({ onCancel }) => (
+  <motion.div 
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="h-full w-full flex flex-col items-center justify-center bg-slate-900/50 rounded-[2.5rem] border border-white/10 backdrop-blur-md"
+  >
+    <div className="relative mb-8">
+      <div className="w-20 h-20 border-4 border-brand-blue/20 border-t-brand-blue rounded-full animate-spin" />
+      <Cpu className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-blue w-8 h-8" />
+    </div>
+    <h3 className="text-white font-header font-bold text-xl uppercase tracking-widest">Analyzing Neural Patterns</h3>
+    <p className="text-slate-400 text-sm mt-2 font-body">Gemini is extracting graph structures...</p>
+    
+    <button 
+      onClick={onCancel}
+      className="mt-8 px-6 py-2 rounded-full border border-white/10 text-white/40 text-[10px] font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
+    >
+      Cancel Request
+    </button>
+  </motion.div>
+);
+
+/**
  * @main VisionToGraphDashboard
  * Responsive version with Mobile Hamburger Menu and Centered Navigation.
  */
@@ -48,10 +75,14 @@ const VisionToGraphDashboard = () => {
   const [isApiOpen, setIsApiOpen] = useState(false); // API Reference modal state
   const [isExplorerMode, setIsExplorerMode] = useState(false); // Graph Explorer mode state
   const [isDocsOpen, setIsDocsOpen] = useState(false); // Documentation modal state
+  const [localPreview, setLocalPreview] = useState(null);   
   
   // --- LOGIC HOOK (Manages the "Heavy Lifting" and Connection) ---
   // We extract status and error directly from our custom delivery specialist
-  const { status, error, handleFileUpload } = useGraphUpload();
+  const { status, error, graphData, handleFileUpload,resetUpload } = useGraphUpload();
+  useEffect(() => {
+  if (status === 'idle') setLocalPreview(null);
+    }, [status]);
   
 
   return (
@@ -176,39 +207,21 @@ const VisionToGraphDashboard = () => {
                   </p>
                 </div>
 
-                {/* Upload Zone */}
-                <div className="relative group max-w-xl mx-auto lg:mx-0">
-                  <div className={`
-                    relative h-[250px] md:h-[300px] rounded-[2.5rem] border-2 border-dashed transition-all duration-500 flex flex-col items-center justify-center text-center p-8
-                    ${status === 'success' ? 'border-brand-success bg-brand-success/5' : 
-                      status === 'error' ? 'border-red-500 bg-red-500/5' : 
-                      status === 'uploading' ? 'border-brand-blue bg-brand-blue/5' : 
-                      'border-text-main/10 hover:border-brand-blue/40 bg-white shadow-xl shadow-text-main/5'}
-                  `}>
-                    <input 
-                      type="file" 
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      onChange={handleFileUpload}
-                      disabled={status === 'uploading'}
-                    />
-                    
-                    <div className="space-y-4">
-                      <div className="w-16 h-16 bg-text-main/5 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                        {status === 'success' ? <CheckCircle2 className="w-8 h-8 text-brand-success" /> : <Upload className="w-8 h-8 text-text-main/40" />}
-                      </div>
-                      <div>
-                        <p className="text-lg font-bold text-text-main tracking-tight">
-                          {status === 'uploading' ? 'Processing Inference...' : 'Select Visualization'}
-                        </p>
-                        <p className="text-xs text-text-sub uppercase tracking-widest font-semibold mt-1">
-                          Drag and drop or click to browse
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                {/* ========================================================================= 
+                  INTEGRATED AI PANEL VISUALIZER 
+                  - Replaces manual logic with the specialized AIPanelVisualizer component.
+                  - Manages its own internal transition between Upload and Analysis views.
+                  ========================================================================= */}
+                <div className="relative group max-w-xl lg:max-w-4xl mx-auto lg:mx-0 transition-all duration-700">
+                  <AIPanelVisualizer 
+                    status={status} 
+                    handleFileUpload={handleFileUpload} 
+                    graphData={graphData} 
+                  />
 
-                  <div className="mt-6 h-12">
-                    <AnimatePresence>
+                  {/* Standardized Error Message Container */}
+                    <div className="mt-6 h-12">
+                      <AnimatePresence>
                       {status === 'error' && <ErrorMessage message={error} />}
                     </AnimatePresence>
                   </div>
@@ -231,23 +244,68 @@ const VisionToGraphDashboard = () => {
             )}
           </AnimatePresence>
 
-          {/* Right Column: Visualization / Explorer Panel */}
-          <motion.section 
-            layout
-            transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
-            className={`h-full min-h-[400px] md:min-h-[500px] order-1 lg:order-2 ${
-              isExplorerMode ? 'lg:col-span-12' : 'lg:col-span-5'
-            }`}
-          >
+          {/* RIGHT COLUMN: DYNAMIC VISUALIZATION & EXPLORER PANEL */}
+        <motion.section 
+          layout // Critical for smooth resizing between span-5 and span-12
+          transition={{ duration: 0.6, type: "spring", stiffness: 100, damping: 20 }}
+          className={`relative h-full min-h-[400px] md:min-h-[500px] order-1 lg:order-2 overflow-hidden ${
+            isExplorerMode ? 'lg:col-span-12' : 'lg:col-span-5'
+          }`}
+        >
+          <AnimatePresence mode="wait">
+            {/* PRIORITY 1: EXPLORER MODE (FULL SCREEN FOCUS) */}
             {isExplorerMode ? (
+              <motion.div
+                key="explorer"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="h-full w-full"
+              >
               <GraphExplorer 
-                isExplorerMode={isExplorerMode} // Pass the state to trigger the focused explorer layout
-                onExit={() => setIsExplorerMode(false)}
+                isExplorerMode={isExplorerMode} 
+                onExit={() => setIsExplorerMode(false)} 
               />
-            ) : (
-              <GraphVisualizer />
-            )}
-          </motion.section>
+            </motion.div>
+          ) : (
+            /* PRIORITY 2: AI EXTRACTION PIPELINE */
+            <motion.div
+              key="viz-stack"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="h-full w-full"
+            >
+              {status === 'uploading' || status === 'processing' ? (
+                <ProcessingState 
+                  key="processing" 
+                  onCancel={resetUpload} 
+                />
+              ) : graphData ? (
+                /* PHASE A: THE AI-GENERATED CANVAS */
+                <GraphCanvas key="canvas" graphData={graphData} />
+              ) : (
+                /* DEFAULT: AMBIENT GRAPH ANIMATION */
+                <GraphVisualizer key="ambient" />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ERROR OVERLAY: Professional feedback toast */}
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              className="absolute bottom-6 left-6 right-6 z-50"
+            >
+              <ErrorMessage message={error} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.section>
 
         </main>
       
@@ -275,6 +333,7 @@ const VisionToGraphDashboard = () => {
           <AnalyticsDrawer isOpen={isAnalyticsOpen} onClose={() => setIsAnalyticsOpen(false)} />
           <ApiReferenceModal isOpen={isApiOpen} onClose={() => setIsApiOpen(false)} />
           <Documentation isOpen={isDocsOpen} onClose={() => setIsDocsOpen(false)} />
+          
         </footer>
       </div>
     </div>

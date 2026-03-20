@@ -15,6 +15,8 @@ import api from '../services/api';
 export const useGraphUpload = () => {
   const [status, setStatus] = useState('idle'); // 'idle' | 'uploading' | 'success' | 'error'
   const [error, setError] = useState(null);
+  const [graphData, setGraphData] = useState(null);
+  
 
   /**
    * Resets the hook to its initial state
@@ -22,6 +24,7 @@ export const useGraphUpload = () => {
   const resetUpload = useCallback(() => {
     setStatus('idle');
     setError(null);
+    setGraphData(null);
   }, []);
 
   /**
@@ -63,6 +66,7 @@ export const useGraphUpload = () => {
        */
       if (result && result.success) {
         console.log('[UPLOAD] Data synchronization successful.');
+        setGraphData(result.graph || result.data || result);
         setStatus('success');
         return result; 
       } else {
@@ -84,5 +88,5 @@ export const useGraphUpload = () => {
     }
   }, []);
 
-  return { status, error, handleFileUpload, resetUpload };
+  return { status, error, handleFileUpload, resetUpload, graphData};
 };
