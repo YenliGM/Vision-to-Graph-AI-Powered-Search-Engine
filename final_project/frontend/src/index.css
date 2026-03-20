@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
+
 @theme {
   /* Typography Variables */
   --font-header: "Exo 2", ui-sans-serif, system-ui, sans-serif;
